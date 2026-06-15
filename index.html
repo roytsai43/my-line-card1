@@ -3,858 +3,247 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>台新證券 數位名片</title>
+    <title>台新證券 數位名片傳送助手</title>
     <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://static.line-scdn.net/liff/edge/2/sdk.js"></script>
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@400;500;700;900&display=swap');
-        body { 
-            font-family: 'Noto Sans TC', sans-serif; 
-            background-color: #111827; 
-            background-image: radial-gradient(circle at top right, #1f2937, #111827);
-        }
-        
-        /* 隱藏預設捲軸，但保留滑動功能 */
-        .hide-scrollbar::-webkit-scrollbar {
-            display: none;
-        }
-        .hide-scrollbar {
-            -ms-overflow-style: none;
-            scrollbar-width: none;
-        }
+        body { font-family: 'Noto Sans TC', sans-serif; background-color: #111827; }
+        .theme-bg { background: linear-gradient(135deg, #e60012 0%, #b3000e 100%); }
     </style>
 </head>
-<body class="min-h-screen flex flex-col items-center justify-center py-10 relative overflow-x-hidden">
+<body class="min-h-screen flex items-center justify-center p-6 text-center text-white relative">
 
-    <!-- 畫面容器 (支援手機與電腦版) -->
-    <div class="w-full max-w-md lg:max-w-6xl mx-auto relative z-10">
-        
-        <!-- 手機版提示文字 -->
-        <p class="text-center text-gray-400 text-sm mb-4 animate-pulse flex items-center justify-center gap-2 lg:hidden">
-            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7h12m0 0l-4-4m4 4l-4 4m0 6H4m0 0l4 4m-4-4l4-4"></path></svg>
-            左右滑動檢視名片
-        </p>
-
-        <!-- 輪播卡片區 -->
-        <div class="flex overflow-x-auto lg:overflow-visible lg:flex-wrap lg:justify-center snap-x snap-mandatory gap-4 lg:gap-8 pb-8 px-6 hide-scrollbar">
-            
-            <!-- ================= 第一頁：個人簡介 ================= -->
-            <div class="min-w-[85%] w-[85%] sm:min-w-[320px] sm:w-[320px] snap-center bg-white rounded-2xl overflow-hidden shadow-2xl flex flex-col shrink-0 lg:hover:-translate-y-2 transition-transform duration-300 border border-gray-100">
-                <div class="bg-[#111111] px-5 py-3 flex justify-between items-center">
-                    <span class="text-[#e60012] text-xs font-bold tracking-widest">PROFESSIONAL PROFILE</span>
-                    <span class="text-[#444] text-2xl font-black italic">01</span>
-                </div>
-                <img src="https://i.postimg.cc/V65Hsshq/ming-pian.jpg" alt="Profile" class="w-full aspect-[3/2] object-cover">
-                <div class="p-5 flex-grow bg-white">
-                    <h2 class="text-xl font-bold text-gray-900">台新證券</h2>
-                    <p class="text-xs font-bold text-[#e60012] mt-1">TAISHIN SECURITIES</p>
-                    <hr class="my-4 border-gray-100">
-                    <ul class="space-y-3 text-sm text-gray-500 font-medium">
-                        <li class="flex items-start gap-2"><span class="text-[#e60012] shrink-0">★</span> <span>一站式整合開戶與極速下單體驗</span></li>
-                        <li class="flex items-start gap-2"><span class="text-[#e60012] shrink-0">★</span> <span>提供全方位多元金融理財商品規劃</span></li>
-                        <li class="flex items-start gap-2"><span class="text-[#e60012] shrink-0">★</span> <span>專業親切的投資顧問與即時市場分析</span></li>
-                    </ul>
-                </div>
-                <div class="p-5 pt-0 space-y-2">
-                    <button onclick="handleOpenLink(LINE_ADD_FRIEND_URL)" class="w-full py-2.5 bg-[#e60012] text-white rounded-lg font-bold text-sm shadow-md active:scale-95 transition-transform flex justify-center items-center gap-1.5">
-                        ✨ 加 LINE 好友
-                    </button>
-                    <button onclick="handleShareCard()" class="w-full py-2.5 bg-[#404040] text-white rounded-lg font-bold text-sm shadow-md active:scale-95 transition-transform flex justify-center items-center gap-1.5">
-                        ➤ 分享此名片
-                    </button>
-                </div>
-            </div>
-
-            <!-- ================= 第二頁：服務項目 ================= -->
-            <div class="min-w-[85%] w-[85%] sm:min-w-[320px] sm:w-[320px] snap-center bg-white rounded-2xl overflow-hidden shadow-2xl flex flex-col shrink-0 lg:hover:-translate-y-2 transition-transform duration-300 border border-gray-100">
-                <div class="bg-[#111111] px-5 py-3 flex justify-between items-center">
-                    <span class="text-[#e60012] text-xs font-bold tracking-widest">SERVICES & SOLUTIONS</span>
-                    <span class="text-[#444] text-2xl font-black italic">02</span>
-                </div>
-                <img src="https://i.postimg.cc/qM6QZ5fM/xin-yong-ka.png" alt="Services" class="w-full aspect-[3/2] object-cover">
-                <div class="p-5 flex-grow bg-white">
-                    <h2 class="text-xl font-bold text-gray-900">我的專業服務項目</h2>
-                    <p class="text-xs font-bold text-gray-400 mt-1">PROFESSIONAL SERVICES</p>
-                    <hr class="my-4 border-gray-100">
-                    <ul class="space-y-3 text-sm text-gray-500 font-medium">
-                        <li class="flex items-start gap-2"><span class="text-[#e60012] shrink-0">★</span> <span>證券交易下單</span></li>
-                        <li class="flex items-start gap-2"><span class="text-[#e60012] shrink-0">★</span> <span>財富管理基金申購</span></li>
-                        <li class="flex items-start gap-2"><span class="text-[#e60012] shrink-0">★</span> <span>信用卡申辦</span></li>
-                    </ul>
-                </div>
-                <div class="p-5 pt-0 space-y-2">
-                    <button onclick="handleOpenLink(OPEN_ACCOUNT_URL)" class="w-full py-2.5 bg-[#e60012] text-white rounded-lg font-bold text-sm shadow-md active:scale-95 transition-transform flex justify-center items-center gap-1.5">
-                        🛒 開戶連結
-                    </button>
-                    <button onclick="handleOpenLink(CREDIT_CARD_URL)" class="w-full py-2.5 bg-[#404040] text-white rounded-lg font-bold text-sm shadow-md active:scale-95 transition-transform flex justify-center items-center gap-1.5">
-                        🎬 信用卡申辦
-                    </button>
-                </div>
-            </div>
-
-            <!-- ================= 第三頁：技術分析與操作引導 ================= -->
-            <div class="min-w-[85%] w-[85%] sm:min-w-[320px] sm:w-[320px] snap-center bg-white rounded-2xl overflow-hidden shadow-2xl flex flex-col shrink-0 lg:hover:-translate-y-2 transition-transform duration-300 border border-gray-100">
-                <div class="bg-[#111111] px-5 py-3 flex justify-between items-center">
-                    <span class="text-[#e60012] text-xs font-bold tracking-widest">TECHNICAL & OPERATION</span>
-                    <span class="text-[#444] text-2xl font-black italic">03</span>
-                </div>
-                <img src="https://images.unsplash.com/photo-1611974789855-9c2a0a7236a3?q=80&w=800&auto=format&fit=crop" alt="Chart Analysis" class="w-full aspect-[3/2] object-cover filter contrast-125 saturate-150">
-                <div class="p-5 flex-grow bg-white">
-                    <h2 class="text-xl font-extrabold text-gray-900 tracking-wide">技術分析與操作引導</h2>
-                    <p class="text-xs font-bold text-gray-400 mt-1">CHART ANALYSIS & LIMITS</p>
-                    <hr class="my-4 border-gray-100">
-                    <ul class="space-y-3 text-sm text-gray-600 font-medium">
-                        <li class="flex items-start gap-2"><span class="text-[#e60012] shrink-0">★</span> <span>處置股與圈存交易流程教學</span></li>
-                        <li class="flex items-start gap-2"><span class="text-[#e60012] shrink-0">★</span> <span>交易額度提升操作指引</span></li>
-                    </ul>
-                </div>
-                <div class="p-5 pt-0 space-y-2">
-                    <button onclick="openImageModal('https://i.postimg.cc/9fT3THH8/quan-cun-yu-shou-gu-piao.png')" class="w-full py-2.5 bg-[#e60012] text-white rounded-lg font-bold text-sm shadow-md active:scale-95 transition-transform flex justify-center items-center gap-2 border border-[#e60012]">
-                        📈 再處置股交易操作
-                    </button>
-                    <button onclick="openImageModal('https://i.postimg.cc/d30TNYvC/Chat-GPT-Image-2026nian6yue15ri-xia-wu10-53-46.png')" class="w-full py-2.5 bg-[#222222] text-white rounded-lg font-bold text-sm shadow-md active:scale-95 transition-transform flex justify-center items-center gap-2 border border-[#444]">
-                        💳 提高交易額度操作
-                    </button>
-                </div>
-            </div>
-
+    <!-- 模式一：傳送工具主容器 (您自己操作時看到) -->
+    <div id="mainContainer" class="max-w-xs w-full">
+        <!-- 狀態顯示區 -->
+        <div id="loadingUI">
+            <div class="w-12 h-12 border-4 border-[#e60012] border-t-transparent rounded-full animate-spin mx-auto mb-4"></div>
+            <h1 class="text-lg font-bold">正在連線 LINE 傳送引擎</h1>
+            <p id="statusDesc" class="text-gray-400 text-xs mt-2 text-balance">啟動中，請稍候...</p>
         </div>
-    </div>
 
-    <!-- 圖片放大預覽彈窗 -->
-    <div id="imageModal" class="fixed inset-0 z-50 hidden bg-black/95 backdrop-blur-sm flex items-center justify-center p-4 transition-opacity duration-300 opacity-0" onclick="closeImageModal()">
-        <div class="relative w-full max-w-2xl max-h-[90vh] flex flex-col items-center" onclick="event.stopPropagation()">
-            
-            <!-- 關閉按鈕 -->
-            <button onclick="closeImageModal()" class="absolute -top-12 right-0 text-white hover:text-[#e60012] transition-colors p-2 bg-white/10 rounded-full">
-                <svg class="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg>
+        <!-- 手動按鈕區 -->
+        <div id="manualUI" class="hidden">
+            <div class="w-16 h-16 theme-bg rounded-2xl mx-auto mb-4 flex items-center justify-center shadow-2xl">
+                <svg class="w-8 h-8 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8.684 13.342C8.886 12.938 9 12.482 9 12c0-.482-.114-.938-.316-1.342m0 2.684a3 3 0 110-2.684m0 2.684l6.632 3.316m-6.632-6l6.632-3.316m0 0a3 3 0 105.367-2.684 3 3 0 00-5.367 2.684zm0 9.316a3 3 0 105.368 2.684 3 3 0 00-5.368-2.684z"></path></svg>
+            </div>
+            <h1 class="text-xl font-bold">分享名片給好友</h1>
+            <button onclick="sendMyCard()" class="mt-8 w-full py-4 theme-bg text-white rounded-2xl font-black text-lg active:scale-95 transition-all shadow-lg">
+                選取好友並發送
             </button>
-            
-            <!-- 圖片容器 -->
-            <div class="overflow-y-auto w-full bg-[#111] rounded-xl hide-scrollbar flex items-center justify-center shadow-2xl">
-                <img id="modalImg" src="" alt="教學流程圖" class="w-full h-auto object-contain rounded-xl">
-            </div>
-            
-            <p class="text-white/60 text-xs mt-4">點擊背景或右上角關閉</p>
+        </div>
+
+        <!-- 錯誤提示區 -->
+        <div id="errorUI" class="hidden bg-red-500/10 border border-red-500/50 p-6 rounded-[2rem]">
+            <h1 class="text-red-400 font-bold mb-2 text-lg">初始化失敗</h1>
+            <p id="errorDetail" class="text-gray-300 text-xs leading-relaxed"></p>
+            <button onclick="window.location.reload()" class="mt-4 text-[10px] text-white/50 underline uppercase tracking-widest">重新整理</button>
         </div>
     </div>
 
-    <!-- 精美吐司反饋提示元件 (取代 alert) -->
-    <div id="toast" class="fixed top-6 left-1/2 -translate-x-1/2 z-50 bg-gray-900/95 backdrop-blur text-white px-5 py-3.5 rounded-xl shadow-2xl flex items-center gap-3 transition-all duration-300 border border-[#e60012]/50 transform translate-y-[-100px] opacity-0 pointer-events-none max-w-xs sm:max-w-md w-[90%]">
-        <span id="toast-icon" class="text-xl"></span>
-        <span id="toast-message" class="text-sm font-semibold tracking-wide"></span>
+    <!-- 模式二：客戶接收端專用 - 純淨無廣告看圖區 (預設隱藏) -->
+    <div id="imageViewerUI" class="hidden fixed inset-0 z-50 bg-black flex flex-col items-center justify-center">
+        <!-- 關閉按鈕 -->
+        <button onclick="liff.closeWindow()" class="absolute top-4 right-4 z-50 bg-white/20 p-2 rounded-full text-white backdrop-blur-md active:scale-95 transition-transform">
+            <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg>
+        </button>
+        <!-- 圖片容器 -->
+        <div class="w-full h-full overflow-auto flex items-center justify-center relative">
+            <img id="viewerImg" src="" class="w-full h-auto object-contain max-h-full">
+        </div>
     </div>
-
-    <!-- 引入 LINE LIFF 官方 SDK -->
-    <script src="https://static.line-scdn.net/liff/edge/2/sdk.js"></script>
 
     <script>
-        // ==========================================
-        // 核心設定：請替換為您的實體連結及 ID
-        // ==========================================
-        const LIFF_ID = '2010402163-tC1IwZIT'; // 請置換為您的 LIFF ID
-        const LINE_ADD_FRIEND_URL = 'https://line.me/ti/p/~請替換為您的LINE連結';
-        const OPEN_ACCOUNT_URL = 'https://請替換為您的開戶連結';
-        const CREDIT_CARD_URL = 'https://請替換為您的申辦連結';
+        const MY_LIFF_ID = "2010402163-tC1IwZIT"; 
+        const MY_LIFF_URL = "https://liff.line.me/" + MY_LIFF_ID;
 
-        // 圖片對照表
-        const IMG_MAP = {
-            '1': 'https://i.postimg.cc/9fT3THH8/quan-cun-yu-shou-gu-piao.png',
-            '2': 'https://i.postimg.cc/d30TNYvC/Chat-GPT-Image-2026nian6yue15ri-xia-wu10-53-46.png'
-        };
-
-        // 吐司通知顯示模組 (完全避免 alert)
-        function showToast(message, type = 'success') {
-            const toast = document.getElementById('toast');
-            const icon = document.getElementById('toast-icon');
-            const msgSpan = document.getElementById('toast-message');
-
-            msgSpan.innerText = message;
-
-            if (type === 'success') {
-                icon.innerHTML = '✨';
-                toast.style.borderColor = '#e60012'; // 台新主色紅
-            } else if (type === 'error') {
-                icon.innerHTML = '❌';
-                toast.style.borderColor = '#ef4444'; // 紅色
-            } else {
-                icon.innerHTML = 'ℹ️';
-                toast.style.borderColor = '#4b5563'; // 灰色
-            }
-
-            // 進場動畫
-            toast.classList.remove('translate-y-[-100px]', 'opacity-0', 'pointer-events-none');
-            toast.classList.add('translate-y-0', 'opacity-100');
-
-            // 3秒後出場
-            setTimeout(() => {
-                toast.classList.add('translate-y-[-100px]', 'opacity-0', 'pointer-events-none');
-                toast.classList.remove('translate-y-0', 'opacity-100');
-            }, 3000);
-        }
-
-        // ==========================================
-        // 頁面內圖片燈箱控制 (第三張卡片大圖效果)
-        // ==========================================
-        function openImageModal(src) {
-            const modal = document.getElementById('imageModal');
-            const img = document.getElementById('modalImg');
-            img.src = src;
-            modal.classList.remove('hidden');
-            void modal.offsetWidth; // 強制重繪
-            modal.classList.remove('opacity-0');
-        }
-
-        function closeImageModal() {
-            const modal = document.getElementById('imageModal');
-            modal.classList.add('opacity-0');
-            setTimeout(() => {
-                modal.classList.add('hidden');
-                document.getElementById('modalImg').src = '';
-                
-                // 關閉 Modal 時，順便清除網址列的參數（防止使用者重新整理時又一直自動彈出）
-                if (window.history.pushState) {
-                    const newurl = window.location.protocol + "//" + window.location.host + window.location.pathname;
-                    window.history.pushState({path:newurl},'',newurl);
-                }
-            }, 300);
-        }
-
-        // ==========================================
-        // 解析網址列參數的輔助函式
-        // ==========================================
-        function getQueryParam(name) {
-            // 先搜尋標準 search 參數
-            const urlParams = new URLSearchParams(window.location.search);
-            if (urlParams.has(name)) {
-                return urlParams.get(name);
-            }
-            // 備用方案：處理 LIFF 可能把參數帶在 hash 內部的狀況
-            const hash = window.location.hash;
-            const hashIndex = hash.indexOf('?');
-            if (hashIndex !== -1) {
-                const hashParams = new URLSearchParams(hash.substring(hashIndex));
-                if (hashParams.has(name)) {
-                    return hashParams.get(name);
-                }
-            }
-            return null;
-        }
-
-        // 檢查路由並決定是否直接彈出大圖
-        function handleRouting() {
-            const imgId = getQueryParam('img');
-            if (imgId && IMG_MAP[imgId]) {
-                openImageModal(IMG_MAP[imgId]);
-            }
-        }
-
-        // ==========================================
-        // LIFF 初始化
-        // ==========================================
-        document.addEventListener('DOMContentLoaded', () => {
-            initializeLiff();
+        const starLine = (text) => ({
+            "type": "box", "layout": "baseline", "spacing": "sm",
+            "contents": [
+                { "type": "text", "text": "★", "color": "#e60012", "flex": 0, "size": "sm" },
+                { "type": "text", "text": text, "color": "#6b7280", "size": "sm", "wrap": true }
+            ]
         });
 
-        async function initializeLiff() {
+        // 完整的三張名片結構
+        const flexMessageJson = {
+          "type": "carousel",
+          "contents": [
+            // 第一頁：個人簡介
+            {
+              "type": "bubble", "size": "mega",
+              "header": {
+                "type": "box", "layout": "horizontal", "backgroundColor": "#111111", "paddingAll": "lg",
+                "contents": [
+                  { "type": "text", "text": "PROFESSIONAL PROFILE", "color": "#e60012", "size": "xs", "weight": "bold", "flex": 1, "gravity": "center" },
+                  { "type": "text", "text": "01", "color": "#222222", "align": "end", "size": "3xl", "weight": "bold", "flex": 0, "gravity": "center" }
+                ]
+              },
+              "hero": { "type": "image", "url": "https://i.postimg.cc/V65Hsshq/ming-pian.jpg", "size": "full", "aspectRatio": "3:2", "aspectMode": "cover" },
+              "body": {
+                "type": "box", "layout": "vertical", "contents": [
+                  { "type": "text", "text": "台新證券", "weight": "bold", "size": "xl", "color": "#111827" },
+                  { "type": "text", "text": "TAISHIN SECURITIES", "size": "xs", "color": "#e60012", "margin": "xs", "weight": "bold" },
+                  { "type": "separator", "margin": "md", "color": "#f3f4f6" },
+                  { "type": "box", "layout": "vertical", "margin": "md", "spacing": "sm",
+                    "contents": [
+                      starLine("一站式整合開戶與極速下單體驗"),
+                      starLine("提供全方位多元金融理財商品規劃"),
+                      starLine("專業親切的投資顧問與即時市場分析")
+                    ]
+                  }
+                ]
+              },
+              "footer": {
+                "type": "box", "layout": "vertical", "spacing": "sm", "contents": [
+                  { "type": "button", "style": "primary", "height": "sm", "action": { "type": "uri", "label": "✨ 加 LINE 好友", "uri": "https://line.me/ti/p/7kbEbMgAW5" }, "color": "#e60012" },
+                  { "type": "button", "style": "primary", "height": "sm", "action": { "type": "uri", "label": "➤ 分享此名片", "uri": MY_LIFF_URL }, "color": "#404040" }
+                ]
+              }
+            },
+            // 第二頁：服務項目
+            {
+              "type": "bubble", "size": "mega",
+              "header": {
+                "type": "box", "layout": "horizontal", "backgroundColor": "#111111", "paddingAll": "lg",
+                "contents": [
+                  { "type": "text", "text": "SERVICES & SOLUTIONS", "color": "#e60012", "size": "xs", "weight": "bold", "flex": 1, "gravity": "center" },
+                  { "type": "text", "text": "02", "color": "#222222", "align": "end", "size": "3xl", "weight": "bold", "flex": 0, "gravity": "center" }
+                ]
+              },
+              "hero": { "type": "image", "url": "https://i.postimg.cc/qM6QZ5fM/xin-yong-ka.png", "size": "full", "aspectRatio": "3:2", "aspectMode": "cover" },
+              "body": {
+                "type": "box", "layout": "vertical", "contents": [
+                  { "type": "text", "text": "我的專業服務項目", "weight": "bold", "size": "xl", "color": "#111827" },
+                  { "type": "text", "text": "PROFESSIONAL SERVICES", "size": "xs", "color": "#9ca3af", "margin": "xs" },
+                  { "type": "separator", "margin": "md", "color": "#f3f4f6" },
+                  { "type": "box", "layout": "vertical", "margin": "md", "spacing": "sm",
+                    "contents": [
+                      starLine("證券交易下單"),
+                      starLine("財富管理基金申購"),
+                      starLine("信用卡申辦")
+                    ]
+                  }
+                ]
+              },
+              "footer": {
+                "type": "box", "layout": "vertical", "spacing": "sm", "contents": [
+                  { "type": "button", "style": "primary", "height": "sm", "action": { "type": "uri", "label": "🛒 開戶連結", "uri": "https://eopen.tssco.com.tw/eopen/?openExternalBrowser=1#/home?ReferralOffice=192&ReferralCompany=8&ReferralCode=J1154526&ActivityCode=OUFB&Clerk=&SaleEmpId=J1154526&BranchId=192&bankBranch=&VersionType=3&MProId=" }, "color": "#e60012" },
+                  { "type": "button", "style": "primary", "height": "sm", "action": { "type": "uri", "label": "🎬 信用卡申辦", "uri": "https://www.taishinbank.com.tw/eServiceA/CreditCardAP/apply/sc.jsp?sc=AAAC154526&pr=&sl=23" }, "color": "#404040" }
+                ]
+              }
+            },
+            // 第三頁：技術分析與操作引導
+            {
+              "type": "bubble", "size": "mega",
+              "header": {
+                "type": "box", "layout": "horizontal", "backgroundColor": "#111111", "paddingAll": "lg",
+                "contents": [
+                  { "type": "text", "text": "TECHNICAL & OPERATION", "color": "#e60012", "size": "xs", "weight": "bold", "flex": 1, "gravity": "center" },
+                  { "type": "text", "text": "03", "color": "#222222", "align": "end", "size": "3xl", "weight": "bold", "flex": 0, "gravity": "center" }
+                ]
+              },
+              "hero": { "type": "image", "url": "https://images.unsplash.com/photo-1611974789855-9c2a0a7236a3?q=80&w=800&auto=format&fit=crop", "size": "full", "aspectRatio": "3:2", "aspectMode": "cover" },
+              "body": {
+                "type": "box", "layout": "vertical", "contents": [
+                  { "type": "text", "text": "技術分析與操作引導", "weight": "bold", "size": "xl", "color": "#111827" },
+                  { "type": "text", "text": "CHART ANALYSIS & LIMITS", "size": "xs", "color": "#9ca3af", "margin": "xs" },
+                  { "type": "separator", "margin": "md", "color": "#f3f4f6" },
+                  { "type": "box", "layout": "vertical", "margin": "md", "spacing": "sm",
+                    "contents": [
+                      starLine("處置股與圈存交易流程教學"),
+                      starLine("交易額度提升操作指引")
+                    ]
+                  }
+                ]
+              },
+              "footer": {
+                "type": "box", "layout": "vertical", "spacing": "sm", "contents": [
+                  // 注意：這裡改成連到您的 LIFF 網址，並在後面加上秘密標記 (#quan_cun 和 #ti_gao)
+                  { "type": "button", "style": "primary", "height": "sm", "action": { "type": "uri", "label": "📈 再處置股交易操作", "uri": MY_LIFF_URL + "#quan_cun" }, "color": "#e60012" },
+                  { "type": "button", "style": "primary", "height": "sm", "action": { "type": "uri", "label": "💳 提高交易額度操作", "uri": MY_LIFF_URL + "#ti_gao" }, "color": "#222222" }
+                ]
+              }
+            }
+          ]
+        };
+
+        async function sendMyCard() {
             try {
-                if (LIFF_ID === '請替換為您的LIFF_ID' || !LIFF_ID) {
-                    console.warn('⚠️ 注意：LIFF ID 尚未正確替換，目前於一般網頁環境模擬。');
-                    handleRouting(); // 模擬環境下也能測試路由
+                if (!liff.isApiAvailable('shareTargetPicker')) {
+                    document.getElementById('loadingUI').classList.add('hidden');
+                    document.getElementById('errorUI').classList.remove('hidden');
+                    document.getElementById('errorDetail').innerText = "⚠️ 錯誤：您的 LINE 版本或環境不支援分享功能。";
                     return;
                 }
-                
-                await liff.init({ liffId: LIFF_ID });
-                console.log("LIFF 初始化完成！");
-                
-                // LIFF 初始化完成後，立即執行路由檢查
-                handleRouting();
-                
-                if (!liff.isLoggedIn()) {
-                    console.log("偵測到尚未登入，將引導登入...");
-                }
-            } catch (error) {
-                console.error("LIFF 初始化失敗:", error);
-                showToast("LIFF 載入失敗，將以常規瀏覽器模式執行", "error");
-                handleRouting(); // 失敗時也允許嘗試載入路由
-            }
-        }
-
-        // ==========================================
-        // 核心動作：處理外部網址跳轉 (LIFF環境 vs 一般環境)
-        // ==========================================
-        function handleOpenLink(url) {
-            if (url.includes('請替換為您的')) {
-                showToast("請在代碼頂部先設定您的專屬連結！", "error");
-                return;
-            }
-
-            // 在 LINE 內部時，使用 liff.openWindow 外部瀏覽器開啟避免卡死
-            if (typeof liff !== 'undefined' && liff.isInClient && liff.isInClient()) {
-                liff.openWindow({
-                    url: url,
-                    external: true
-                });
-            } else {
-                window.open(url, '_blank');
-            }
-        }
-
-        // ==========================================
-        // 核心動作：調用 LINE ShareTargetPicker 分享輪播卡片
-        // ==========================================
-        async function handleShareCard() {
-            // 檢查 LIFF ID 設定
-            if (LIFF_ID === '請替換為您的LIFF_ID' || !LIFF_ID) {
-                showToast("請先在代碼頂端填入您的 LIFF ID 才能執行分享功能！", "error");
-                return;
-            }
-
-            // 確保是在 LIFF 執行環境
-            if (typeof liff === 'undefined') {
-                showToast("非 LINE 執行環境，無法調用分享服務", "error");
-                return;
-            }
-
-            // 檢查是否登入
-            if (!liff.isLoggedIn()) {
-                showToast("正在導向登入頁面...", "info");
-                liff.login();
-                return;
-            }
-
-            // 檢查 ShareTargetPicker 權限
-            if (!liff.isApiAvailable('shareTargetPicker')) {
-                showToast("當前 LINE 帳號或環境不支援分享功能", "error");
-                return;
-            }
-
-            try {
-                showToast("正在開啟分享好友清單...", "info");
-                
-                const result = await liff.shareTargetPicker([
+                const res = await liff.shareTargetPicker([
                     {
                         "type": "flex",
-                        "altText": "台新證券 數位名片",
-                        "contents": {
-                            "type": "carousel",
-                            "contents": [
-                                {
-                                    "type": "bubble",
-                                    "size": "mega",
-                                    "header": {
-                                        "type": "box",
-                                        "layout": "horizontal",
-                                        "backgroundColor": "#111111",
-                                        "paddingAll": "12px",
-                                        "paddingStart": "20px",
-                                        "paddingEnd": "20px",
-                                        "alignItems": "center",
-                                        "contents": [
-                                            {
-                                                "type": "text",
-                                                "text": "PROFESSIONAL PROFILE",
-                                                "color": "#e60012",
-                                                "size": "xxs",
-                                                "weight": "bold",
-                                                "flex": 1
-                                            },
-                                            {
-                                                "type": "text",
-                                                "text": "01",
-                                                "color": "#444444",
-                                                "size": "xl",
-                                                "weight": "bold",
-                                                "style": "italic",
-                                                "flex": 0
-                                            }
-                                        ]
-                                    },
-                                    "hero": {
-                                        "type": "image",
-                                        "url": "https://i.postimg.cc/V65Hsshq/ming-pian.jpg",
-                                        "size": "full",
-                                        "aspectRatio": "3:2",
-                                        "aspectMode": "cover"
-                                    },
-                                    "body": {
-                                        "type": "box",
-                                        "layout": "vertical",
-                                        "paddingAll": "20px",
-                                        "contents": [
-                                            {
-                                                "type": "text",
-                                                "text": "台新證券",
-                                                "weight": "bold",
-                                                "size": "xl",
-                                                "color": "#111827"
-                                            },
-                                            {
-                                                "type": "text",
-                                                "text": "TAISHIN SECURITIES",
-                                                "weight": "bold",
-                                                "size": "xs",
-                                                "color": "#e60012",
-                                                "margin": "sm"
-                                            },
-                                            {
-                                                "type": "separator",
-                                                "margin": "lg",
-                                                "color": "#f3f4f6"
-                                            },
-                                            {
-                                                "type": "box",
-                                                "layout": "vertical",
-                                                "margin": "lg",
-                                                "spacing": "sm",
-                                                "contents": [
-                                                    {
-                                                        "type": "box",
-                                                        "layout": "horizontal",
-                                                        "contents": [
-                                                            {
-                                                                "type": "text",
-                                                                "text": "★",
-                                                                "color": "#e60012",
-                                                                "size": "sm",
-                                                                "flex": 0,
-                                                                "weight": "bold"
-                                                            },
-                                                            {
-                                                                "type": "text",
-                                                                "text": "一站式整合開戶與極速下單體驗",
-                                                                "color": "#6b7280",
-                                                                "size": "sm",
-                                                                "wrap": true,
-                                                                "margin": "sm",
-                                                                "weight": "bold"
-                                                            }
-                                                        ]
-                                                    },
-                                                    {
-                                                        "type": "box",
-                                                        "layout": "horizontal",
-                                                        "contents": [
-                                                            {
-                                                                "type": "text",
-                                                                "text": "★",
-                                                                "color": "#e60012",
-                                                                "size": "sm",
-                                                                "flex": 0,
-                                                                "weight": "bold"
-                                                            },
-                                                            {
-                                                                "type": "text",
-                                                                "text": "提供全方位多元金融理財商品規劃",
-                                                                "color": "#6b7280",
-                                                                "size": "sm",
-                                                                "wrap": true,
-                                                                "margin": "sm",
-                                                                "weight": "bold"
-                                                            }
-                                                        ]
-                                                    },
-                                                    {
-                                                        "type": "box",
-                                                        "layout": "horizontal",
-                                                        "contents": [
-                                                            {
-                                                                "type": "text",
-                                                                "text": "★",
-                                                                "color": "#e60012",
-                                                                "size": "sm",
-                                                                "flex": 0,
-                                                                "weight": "bold"
-                                                            },
-                                                            {
-                                                                "type": "text",
-                                                                "text": "專業親切的投資顧問與即時市場分析",
-                                                                "color": "#6b7280",
-                                                                "size": "sm",
-                                                                "wrap": true,
-                                                                "margin": "sm",
-                                                                "weight": "bold"
-                                                            }
-                                                        ]
-                                                    }
-                                                ]
-                                            }
-                                        ]
-                                    },
-                                    "footer": {
-                                        "type": "box",
-                                        "layout": "vertical",
-                                        "paddingStart": "20px",
-                                        "paddingEnd": "20px",
-                                        "paddingBottom": "20px",
-                                        "spacing": "sm",
-                                        "contents": [
-                                            {
-                                                "type": "button",
-                                                "style": "primary",
-                                                "color": "#e60012",
-                                                "height": "sm",
-                                                "action": {
-                                                    "type": "uri",
-                                                    "label": "✨ 加 LINE 好友",
-                                                    "uri": LINE_ADD_FRIEND_URL
-                                                }
-                                            },
-                                            {
-                                                "type": "button",
-                                                "style": "primary",
-                                                "color": "#404040",
-                                                "height": "sm",
-                                                "action": {
-                                                    "type": "uri",
-                                                    "label": "➤ 分享此名片",
-                                                    "uri": `https://liff.line.me/${LIFF_ID}`
-                                                }
-                                            }
-                                        ]
-                                    }
-                                },
-                                {
-                                    "type": "bubble",
-                                    "size": "mega",
-                                    "header": {
-                                        "type": "box",
-                                        "layout": "horizontal",
-                                        "backgroundColor": "#111111",
-                                        "paddingAll": "12px",
-                                        "paddingStart": "20px",
-                                        "paddingEnd": "20px",
-                                        "alignItems": "center",
-                                        "contents": [
-                                            {
-                                                "type": "text",
-                                                "text": "SERVICES & SOLUTIONS",
-                                                "color": "#e60012",
-                                                "size": "xxs",
-                                                "weight": "bold",
-                                                "flex": 1
-                                            },
-                                            {
-                                                "type": "text",
-                                                "text": "02",
-                                                "color": "#444444",
-                                                "size": "xl",
-                                                "weight": "bold",
-                                                "style": "italic",
-                                                "flex": 0
-                                            }
-                                        ]
-                                    },
-                                    "hero": {
-                                        "type": "image",
-                                        "url": "https://i.postimg.cc/qM6QZ5fM/xin-yong-ka.png",
-                                        "size": "full",
-                                        "aspectRatio": "3:2",
-                                        "aspectMode": "cover"
-                                    },
-                                    "body": {
-                                        "type": "box",
-                                        "layout": "vertical",
-                                        "paddingAll": "20px",
-                                        "contents": [
-                                            {
-                                                "type": "text",
-                                                "text": "我的專業服務項目",
-                                                "weight": "bold",
-                                                "size": "xl",
-                                                "color": "#111827"
-                                            },
-                                            {
-                                                "type": "text",
-                                                "text": "PROFESSIONAL SERVICES",
-                                                "weight": "bold",
-                                                "size": "xs",
-                                                "color": "#9ca3af",
-                                                "margin": "sm"
-                                            },
-                                            {
-                                                "type": "separator",
-                                                "margin": "lg",
-                                                "color": "#f3f4f6"
-                                            },
-                                            {
-                                                "type": "box",
-                                                "layout": "vertical",
-                                                "margin": "lg",
-                                                "spacing": "sm",
-                                                "contents": [
-                                                    {
-                                                        "type": "box",
-                                                        "layout": "horizontal",
-                                                        "contents": [
-                                                            {
-                                                                "type": "text",
-                                                                "text": "★",
-                                                                "color": "#e60012",
-                                                                "size": "sm",
-                                                                "flex": 0,
-                                                                "weight": "bold"
-                                                            },
-                                                            {
-                                                                "type": "text",
-                                                                "text": "證券交易下單",
-                                                                "color": "#6b7280",
-                                                                "size": "sm",
-                                                                "wrap": true,
-                                                                "margin": "sm",
-                                                                "weight": "bold"
-                                                            }
-                                                        ]
-                                                    },
-                                                    {
-                                                        "type": "box",
-                                                        "layout": "horizontal",
-                                                        "contents": [
-                                                            {
-                                                                "type": "text",
-                                                                "text": "★",
-                                                                "color": "#e60012",
-                                                                "size": "sm",
-                                                                "flex": 0,
-                                                                "weight": "bold"
-                                                            },
-                                                            {
-                                                                "type": "text",
-                                                                "text": "財富管理基金申購",
-                                                                "color": "#6b7280",
-                                                                "size": "sm",
-                                                                "wrap": true,
-                                                                "margin": "sm",
-                                                                "weight": "bold"
-                                                            }
-                                                        ]
-                                                    },
-                                                    {
-                                                        "type": "box",
-                                                        "layout": "horizontal",
-                                                        "contents": [
-                                                            {
-                                                                "type": "text",
-                                                                "text": "★",
-                                                                "color": "#e60012",
-                                                                "size": "sm",
-                                                                "flex": 0,
-                                                                "weight": "bold"
-                                                            },
-                                                            {
-                                                                "type": "text",
-                                                                "text": "信用卡申辦",
-                                                                "color": "#6b7280",
-                                                                "size": "sm",
-                                                                "wrap": true,
-                                                                "margin": "sm",
-                                                                "weight": "bold"
-                                                            }
-                                                        ]
-                                                    }
-                                                ]
-                                            }
-                                        ]
-                                    },
-                                    "footer": {
-                                        "type": "box",
-                                        "layout": "vertical",
-                                        "paddingStart": "20px",
-                                        "paddingEnd": "20px",
-                                        "paddingBottom": "20px",
-                                        "spacing": "sm",
-                                        "contents": [
-                                            {
-                                                "type": "button",
-                                                "style": "primary",
-                                                "color": "#e60012",
-                                                "height": "sm",
-                                                "action": {
-                                                    "type": "uri",
-                                                    "label": "🛒 開戶連結",
-                                                    "uri": OPEN_ACCOUNT_URL
-                                                }
-                                            },
-                                            {
-                                                "type": "button",
-                                                "style": "primary",
-                                                "color": "#404040",
-                                                "height": "sm",
-                                                "action": {
-                                                    "type": "uri",
-                                                    "label": "🎬 信用卡申辦",
-                                                    "uri": CREDIT_CARD_URL
-                                                }
-                                            }
-                                        ]
-                                    }
-                                },
-                                {
-                                    "type": "bubble",
-                                    "size": "mega",
-                                    "header": {
-                                        "type": "box",
-                                        "layout": "horizontal",
-                                        "backgroundColor": "#111111",
-                                        "paddingAll": "12px",
-                                        "paddingStart": "20px",
-                                        "paddingEnd": "20px",
-                                        "alignItems": "center",
-                                        "contents": [
-                                            {
-                                                "type": "text",
-                                                "text": "TECHNICAL & OPERATION",
-                                                "color": "#e60012",
-                                                "size": "xxs",
-                                                "weight": "bold",
-                                                "flex": 1
-                                            },
-                                            {
-                                                "type": "text",
-                                                "text": "03",
-                                                "color": "#444444",
-                                                "size": "xl",
-                                                "weight": "bold",
-                                                "style": "italic",
-                                                "flex": 0
-                                            }
-                                        ]
-                                    },
-                                    "hero": {
-                                        "type": "image",
-                                        "url": "https://images.unsplash.com/photo-1611974789855-9c2a0a7236a3?q=80&w=800&auto=format&fit=crop",
-                                        "size": "full",
-                                        "aspectRatio": "3:2",
-                                        "aspectMode": "cover"
-                                    },
-                                    "body": {
-                                        "type": "box",
-                                        "layout": "vertical",
-                                        "paddingAll": "20px",
-                                        "contents": [
-                                            {
-                                                "type": "text",
-                                                "text": "技術分析與操作引導",
-                                                "weight": "bold",
-                                                "size": "xl",
-                                                "color": "#111827"
-                                            },
-                                            {
-                                                "type": "text",
-                                                "text": "CHART ANALYSIS & LIMITS",
-                                                "weight": "bold",
-                                                "size": "xs",
-                                                "color": "#9ca3af",
-                                                "margin": "sm"
-                                            },
-                                            {
-                                                "type": "separator",
-                                                "margin": "lg",
-                                                "color": "#f3f4f6"
-                                            },
-                                            {
-                                                "type": "box",
-                                                "layout": "vertical",
-                                                "margin": "lg",
-                                                "spacing": "sm",
-                                                "contents": [
-                                                    {
-                                                        "type": "box",
-                                                        "layout": "horizontal",
-                                                        "contents": [
-                                                            {
-                                                                "type": "text",
-                                                                "text": "★",
-                                                                "color": "#e60012",
-                                                                "size": "sm",
-                                                                "flex": 0,
-                                                                "weight": "bold"
-                                                            },
-                                                            {
-                                                                "type": "text",
-                                                                "text": "處置股與圈存交易流程教學",
-                                                                "color": "#6b7280",
-                                                                "size": "sm",
-                                                                "wrap": true,
-                                                                "margin": "sm",
-                                                                "weight": "bold"
-                                                            }
-                                                        ]
-                                                    },
-                                                    {
-                                                        "type": "box",
-                                                        "layout": "horizontal",
-                                                        "contents": [
-                                                            {
-                                                                "type": "text",
-                                                                "text": "★",
-                                                                "color": "#e60012",
-                                                                "size": "sm",
-                                                                "flex": 0,
-                                                                "weight": "bold"
-                                                            },
-                                                            {
-                                                                "type": "text",
-                                                                "text": "交易額度提升操作指引",
-                                                                "color": "#6b7280",
-                                                                "size": "sm",
-                                                                "wrap": true,
-                                                                "margin": "sm",
-                                                                "weight": "bold"
-                                                            }
-                                                        ]
-                                                    }
-                                                ]
-                                            }
-                                        ]
-                                    },
-                                    "footer": {
-                                        "type": "box",
-                                        "layout": "vertical",
-                                        "paddingStart": "20px",
-                                        "paddingEnd": "20px",
-                                        "paddingBottom": "20px",
-                                        "spacing": "sm",
-                                        "contents": [
-                                            {
-                                                "type": "button",
-                                                "style": "primary",
-                                                "color": "#e60012",
-                                                "height": "sm",
-                                                "action": {
-                                                    "type": "uri",
-                                                    "label": "📈 再處置股交易操作",
-                                                    "uri": `https://liff.line.me/${LIFF_ID}?img=1`
-                                                }
-                                            },
-                                            {
-                                                "type": "button",
-                                                "style": "primary",
-                                                "color": "#222222",
-                                                "height": "sm",
-                                                "action": {
-                                                    "type": "uri",
-                                                    "label": "💳 提高交易額度操作",
-                                                    "uri": `https://liff.line.me/${LIFF_ID}?img=2`
-                                                }
-                                            }
-                                        ]
-                                    }
-                                }
-                            ]
-                        }
+                        "altText": "台新證券數位名片分享",
+                        "contents": flexMessageJson
                     }
                 ]);
-
-                if (result) {
-                    showToast("名片分享發送成功！", "success");
+                
+                if (res) { 
+                    liff.closeWindow(); 
                 } else {
-                    showToast("分享已取消", "info");
+                    document.getElementById('loadingUI').classList.add('hidden');
+                    document.getElementById('manualUI').classList.remove('hidden');
                 }
-            } catch (error) {
-                console.error("分享過程中發生錯誤", error);
-                showToast("分享已被取消或發生非預期錯誤", "error");
+            } catch (err) {
+                console.error(err);
+                document.getElementById('loadingUI').classList.add('hidden');
+                document.getElementById('manualUI').classList.remove('hidden');
             }
         }
+
+        async function main() {
+            // ★ 核心魔法：檢查網址後方是否帶有特定標籤 (#quan_cun 或 #ti_gao)
+            const hash = window.location.hash;
+            
+            // 如果帶有標籤，代表這是「客戶點擊名片按鈕進來看圖」的
+            if (hash === '#quan_cun' || hash === '#ti_gao') {
+                // 隱藏您的發送工具介面
+                document.getElementById('mainContainer').classList.add('hidden');
+                // 將頁面外觀重置，打造全黑乾淨的看圖體驗
+                document.body.classList.remove('p-6');
+                document.body.classList.add('p-0', 'bg-black');
+                
+                const viewerUI = document.getElementById('imageViewerUI');
+                const viewerImg = document.getElementById('viewerImg');
+                
+                // 根據不同的標籤，載入對應的圖檔
+                if (hash === '#quan_cun') {
+                    viewerImg.src = 'https://i.postimg.cc/9fT3THH8/quan-cun-yu-shou-gu-piao.png';
+                } else if (hash === '#ti_gao') {
+                    viewerImg.src = 'https://i.postimg.cc/d30TNYvC/Chat-GPT-Image-2026nian6yue15ri-xia-wu10-53-46.png';
+                }
+                
+                // 顯示看圖區
+                viewerUI.classList.remove('hidden');
+                
+                // 依然需要初始化 liff，這樣客戶看完圖點擊右上角的 X 才能順利關閉視窗回到聊天室
+                await liff.init({ liffId: MY_LIFF_ID });
+                return; // 直接結束，不再執行下方要求登入和傳送名片的程式
+            }
+
+            // 如果網址沒有標籤，代表是您打開工具要發送名片，則執行原本的發送邏輯
+            try {
+                await liff.init({ liffId: MY_LIFF_ID });
+                if (!liff.isLoggedIn()) {
+                    liff.login();
+                } else {
+                    sendMyCard();
+                }
+            } catch (err) {
+                document.getElementById('loadingUI').classList.add('hidden');
+                document.getElementById('errorUI').classList.remove('hidden');
+                document.getElementById('errorDetail').innerText = err.message;
+            }
+        }
+
+        window.onload = main;
     </script>
 </body>
 </html>
