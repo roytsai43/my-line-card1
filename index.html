@@ -48,16 +48,15 @@
         // 分享按鈕專用的網址 (用於按鈕內部)
         const MY_LIFF_URL = "https://liff.line.me/" + MY_LIFF_ID;
 
-        // 輔助函式：產生帶有星星的內容行
+        // 輔助函式：產生帶有星星的內容行 (改用最穩定的 Box Layout 取代 Span，確保 100% 傳送成功)
         const starLine = (text) => ({
-            "type": "text",
+            "type": "box",
+            "layout": "baseline",
+            "spacing": "sm",
             "contents": [
-                { "type": "span", "text": "★ ", "color": "#e60012" }, 
-                { "type": "span", "text": text }
-            ],
-            "size": "sm",
-            "color": "#6b7280",
-            "wrap": true
+                { "type": "text", "text": "★", "color": "#e60012", "flex": 0, "size": "sm" },
+                { "type": "text", "text": text, "color": "#6b7280", "size": "sm", "wrap": true }
+            ]
         });
 
         // 真實發送的 LINE 名片 JSON 結構
@@ -69,10 +68,10 @@
               "type": "bubble",
               "size": "mega",
               "header": {
-                "type": "box", "layout": "vertical", "backgroundColor": "#111111", "paddingAll": "16px",
+                "type": "box", "layout": "horizontal", "backgroundColor": "#111111", "paddingAll": "lg",
                 "contents": [
-                  { "type": "text", "text": "PROFESSIONAL PROFILE", "color": "#e60012", "size": "xxs", "weight": "bold", "letterSpacing": "0.15em" },
-                  { "type": "text", "text": "01", "color": "#222222", "align": "end", "size": "3xl", "weight": "bold", "position": "absolute", "offsetTop": "5px", "offsetEnd": "15px" }
+                  { "type": "text", "text": "PROFESSIONAL PROFILE", "color": "#e60012", "size": "xs", "weight": "bold", "flex": 1, "gravity": "center" },
+                  { "type": "text", "text": "01", "color": "#222222", "align": "end", "size": "3xl", "weight": "bold", "flex": 0, "gravity": "center" }
                 ]
               },
               "hero": {
@@ -108,10 +107,10 @@
               "type": "bubble",
               "size": "mega",
               "header": {
-                "type": "box", "layout": "vertical", "backgroundColor": "#111111", "paddingAll": "16px",
+                "type": "box", "layout": "horizontal", "backgroundColor": "#111111", "paddingAll": "lg",
                 "contents": [
-                  { "type": "text", "text": "SERVICES & SOLUTIONS", "color": "#e60012", "size": "xxs", "weight": "bold", "letterSpacing": "0.15em" },
-                  { "type": "text", "text": "02", "color": "#222222", "align": "end", "size": "3xl", "weight": "bold", "position": "absolute", "offsetTop": "5px", "offsetEnd": "15px" }
+                  { "type": "text", "text": "SERVICES & SOLUTIONS", "color": "#e60012", "size": "xs", "weight": "bold", "flex": 1, "gravity": "center" },
+                  { "type": "text", "text": "02", "color": "#222222", "align": "end", "size": "3xl", "weight": "bold", "flex": 0, "gravity": "center" }
                 ]
               },
               "hero": {
