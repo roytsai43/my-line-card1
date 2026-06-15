@@ -108,7 +108,6 @@
                     </ul>
                 </div>
                 <div class="p-5 pt-0 space-y-2">
-                    <!-- 在 LIFF 網頁中直接利用 Modal 放大最體貼、並具備外部連結功能 -->
                     <button onclick="openImageModal('https://i.postimg.cc/9fT3THH8/quan-cun-yu-shou-gu-piao.png')" class="w-full py-2.5 bg-[#e60012] text-white rounded-lg font-bold text-sm shadow-md active:scale-95 transition-transform flex justify-center items-center gap-2 border border-[#e60012]">
                         📈 再處置股交易操作
                     </button>
@@ -152,10 +151,16 @@
         // ==========================================
         // 核心設定：請替換為您的實體連結及 ID
         // ==========================================
-        const LIFF_ID = '2010402163-tC1IwZIT'; // 請置換為您的 LIFF ID
+        const LIFF_ID = '請替換為您的LIFF_ID'; // 請置換為您的 LIFF ID
         const LINE_ADD_FRIEND_URL = 'https://line.me/ti/p/~請替換為您的LINE連結';
         const OPEN_ACCOUNT_URL = 'https://請替換為您的開戶連結';
         const CREDIT_CARD_URL = 'https://請替換為您的申辦連結';
+
+        // 圖片對照表
+        const IMG_MAP = {
+            '1': 'https://i.postimg.cc/9fT3THH8/quan-cun-yu-shou-gu-piao.png',
+            '2': 'https://i.postimg.cc/d30TNYvC/Chat-GPT-Image-2026nian6yue15ri-xia-wu10-53-46.png'
+        };
 
         // 吐司通知顯示模組 (完全避免 alert)
         function showToast(message, type = 'success') {
@@ -205,7 +210,42 @@
             setTimeout(() => {
                 modal.classList.add('hidden');
                 document.getElementById('modalImg').src = '';
+                
+                // 關閉 Modal 時，順便清除網址列的參數（防止使用者重新整理時又一直自動彈出）
+                if (window.history.pushState) {
+                    const newurl = window.location.protocol + "//" + window.location.host + window.location.pathname;
+                    window.history.pushState({path:newurl},'',newurl);
+                }
             }, 300);
+        }
+
+        // ==========================================
+        // 解析網址列參數的輔助函式
+        // ==========================================
+        function getQueryParam(name) {
+            // 先搜尋標準 search 參數
+            const urlParams = new URLSearchParams(window.location.search);
+            if (urlParams.has(name)) {
+                return urlParams.get(name);
+            }
+            // 備用方案：處理 LIFF 可能把參數帶在 hash 內部的狀況
+            const hash = window.location.hash;
+            const hashIndex = hash.indexOf('?');
+            if (hashIndex !== -1) {
+                const hashParams = new URLSearchParams(hash.substring(hashIndex));
+                if (hashParams.has(name)) {
+                    return hashParams.get(name);
+                }
+            }
+            return null;
+        }
+
+        // 檢查路由並決定是否直接彈出大圖
+        function handleRouting() {
+            const imgId = getQueryParam('img');
+            if (imgId && IMG_MAP[imgId]) {
+                openImageModal(IMG_MAP[imgId]);
+            }
         }
 
         // ==========================================
@@ -219,11 +259,15 @@
             try {
                 if (LIFF_ID === '請替換為您的LIFF_ID' || !LIFF_ID) {
                     console.warn('⚠️ 注意：LIFF ID 尚未正確替換，目前於一般網頁環境模擬。');
+                    handleRouting(); // 模擬環境下也能測試路由
                     return;
                 }
                 
                 await liff.init({ liffId: LIFF_ID });
                 console.log("LIFF 初始化完成！");
+                
+                // LIFF 初始化完成後，立即執行路由檢查
+                handleRouting();
                 
                 if (!liff.isLoggedIn()) {
                     console.log("偵測到尚未登入，將引導登入...");
@@ -231,6 +275,7 @@
             } catch (error) {
                 console.error("LIFF 初始化失敗:", error);
                 showToast("LIFF 載入失敗，將以常規瀏覽器模式執行", "error");
+                handleRouting(); // 失敗時也允許嘗試載入路由
             }
         }
 
@@ -778,7 +823,7 @@
                                                 "action": {
                                                     "type": "uri",
                                                     "label": "📈 再處置股交易操作",
-                                                    "uri": "https://i.postimg.cc/9fT3THH8/quan-cun-yu-shou-gu-piao.png"
+                                                    "uri": `https://liff.line.me/${LIFF_ID}?img=1`
                                                 }
                                             },
                                             {
@@ -789,7 +834,7 @@
                                                 "action": {
                                                     "type": "uri",
                                                     "label": "💳 提高交易額度操作",
-                                                    "uri": "https://i.postimg.cc/d30TNYvC/Chat-GPT-Image-2026nian6yue15ri-xia-wu10-53-46.png"
+                                                    "uri": `https://liff.line.me/${LIFF_ID}?img=2`
                                                 }
                                             }
                                         ]
@@ -803,7 +848,6 @@
                 if (result) {
                     showToast("名片分享發送成功！", "success");
                 } else {
-                    // 使用者在好友選擇清單關閉，未選擇任何好友
                     showToast("分享已取消", "info");
                 }
             } catch (error) {
